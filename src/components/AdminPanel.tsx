@@ -210,7 +210,7 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
             {/* Städspecialisten logga - längst upp */}
             <div className="mb-0">
               <Image
-                src="/logo.png"
+                src="/logo.svg"
                 alt="Städspecialisten Göteborg Logga"
                 width={192}
                 height={192}

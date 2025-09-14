@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { LogIn } from 'lucide-react';
 
 interface LoginFormProps {
-  onLogin: (name: string, role: 'employee' | 'admin') => void;
+  onLogin: (name: string, role: 'employee' | 'admin', username?: string) => void;
 }
 
 export default function LoginForm({ onLogin }: LoginFormProps) {
@@ -29,7 +29,7 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
       const user = users.find((u: { username: string; password: string; name: string; role: 'employee' | 'admin' }) => u.username === name && u.password === password);
 
       if (user) {
-        onLogin(user.name, user.role);
+        onLogin(user.name, user.role, user.username);
       } else {
         setError('Fel användarnamn eller lösenord');
       }
@@ -48,7 +48,7 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
           {/* Städspecialisten logga - längst upp */}
           <div className="mb-0">
             <Image
-              src="/logo.png"
+              src="/logo.svg"
               alt="Städspecialisten Göteborg Logga"
               width={256}
               height={256}

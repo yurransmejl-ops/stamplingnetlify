@@ -68,14 +68,13 @@ export default function Home() {
   };
 
   // Handle login
-  const handleLogin = (name: string, role: 'employee' | 'admin') => {
+  const handleLogin = (name: string, role: 'employee' | 'admin', username?: string) => {
     setCurrentUser(name);
     setUserRole(role);
     localStorage.setItem('currentUser', name);
     localStorage.setItem('userRole', role);
     
-    if (role === 'employee') {
-      const username = name.toLowerCase().replace(' ', '');
+    if (role === 'employee' && username) {
       localStorage.setItem('currentUsername', username);
       checkStampStatus(username);
     }
@@ -97,7 +96,15 @@ export default function Home() {
     if (!currentUser || userRole !== 'employee') return;
 
     setIsLoading(true);
-    const username = localStorage.getItem('currentUsername') || currentUser.toLowerCase().replace(' ', '');
+    const username = localStorage.getItem('currentUsername');
+    
+    if (!username) {
+      console.error('No username found in localStorage');
+      setIsLoading(false);
+      return;
+    }
+
+    console.log('🎯 Attempting to stamp with username:', username);
 
     try {
       const response = await fetch('/api/stamp', {
@@ -109,8 +116,12 @@ export default function Home() {
         })
       });
 
+      console.log('📡 Stamp API response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log('✅ Stamp successful:', data);
+        
         setIsStampedIn(!isStampedIn);
         setCurrentStampId(data.stampId);
         
@@ -124,10 +135,12 @@ export default function Home() {
         setHistoryItems(prev => [newItem, ...prev]);
       } else {
         const error = await response.json();
-        console.error('Stamp error:', error);
+        console.error('❌ Stamp error:', error);
+        alert('Fel vid stämpling: ' + (error.error || 'Okänt fel'));
       }
     } catch (error) {
-      console.error('Error stamping:', error);
+      console.error('❌ Error stamping:', error);
+      alert('Nätverksfel vid stämpling');
     } finally {
       setIsLoading(false);
     }
