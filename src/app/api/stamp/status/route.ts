@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// Same stamp storage as main stamp endpoint
-let stamps: { [username: string]: { isStampedIn: boolean; stampId: string | null; history: any[] } } = {};
+import { getStampStatus } from '@/lib/database';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,15 +12,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize user if not exists
-    if (!stamps[username]) {
-      stamps[username] = { isStampedIn: false, stampId: null, history: [] };
-    }
+    console.log(`📊 Checking stamp status for: ${username}`);
+    
+    const status = await getStampStatus(username);
+    
+    console.log(`✅ Status retrieved:`, status);
 
     return NextResponse.json({
-      isStampedIn: stamps[username].isStampedIn,
-      stampId: stamps[username].stampId,
-      history: stamps[username].history.slice(0, 10) // Last 10 entries
+      isStampedIn: status.isStampedIn,
+      stampId: status.stampId,
+      lastStamp: status.lastStamp
     });
 
   } catch (error) {

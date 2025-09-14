@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// Simulate stamp storage (in production, use Supabase)
-let stamps: { [username: string]: { isStampedIn: boolean; stampId: string | null; history: any[] } } = {};
+import { createStamp, getStampStatus } from '@/lib/database';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,35 +12,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize user if not exists
-    if (!stamps[username]) {
-      stamps[username] = { isStampedIn: false, stampId: null, history: [] };
-    }
-
-    const stampId = `stamp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const timestamp = new Date().toISOString();
-
-    // Update stamp status
-    if (type === 'in') {
-      stamps[username].isStampedIn = true;
-      stamps[username].stampId = stampId;
-    } else if (type === 'out') {
-      stamps[username].isStampedIn = false;
-      stamps[username].stampId = null;
-    }
-
-    // Add to history
-    stamps[username].history.unshift({
-      id: stampId,
-      type,
-      timestamp,
-      date: timestamp.split('T')[0]
-    });
+    console.log(`📝 Creating stamp: ${username} - ${type}`);
+    
+    // Create stamp in database
+    const stamp = await createStamp(username, type);
+    
+    // Get updated status
+    const status = await getStampStatus(username);
+    
+    console.log(`✅ Stamp created successfully:`, stamp);
 
     return NextResponse.json({ 
       success: true, 
-      stampId,
-      isStampedIn: stamps[username].isStampedIn
+      stampId: stamp.id,
+      isStampedIn: status.isStampedIn
     });
 
   } catch (error) {
