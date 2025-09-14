@@ -180,9 +180,12 @@ export default function Home() {
                 className="w-48 h-48 mx-auto object-contain"
               />
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Stämpelapp
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+              Städspecialisten
             </h1>
+            <h2 className="text-xl font-medium text-white mb-4">
+              Göteborg
+            </h2>
           </div>
         </div>
       </div>
@@ -192,47 +195,51 @@ export default function Home() {
         <div className="max-w-md mx-auto px-4 w-full">
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
             <div className="text-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Välkommen, {currentUser}!
-              </h2>
-              <p className="text-gray-600">
-                {isStampedIn ? 'Du är inloggad' : 'Du är utloggad'}
-              </p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                {currentUser} - Stämpling
+              </h3>
+              
+              <button
+                onClick={handleStamp}
+                disabled={isLoading}
+                className={`
+                  w-full px-6 py-3 rounded-lg font-semibold text-lg
+                  flex items-center justify-center gap-3
+                  transition-all duration-200 transform hover:scale-105 active:scale-95
+                  shadow-lg hover:shadow-xl mb-6
+                  ${isStampedIn 
+                    ? 'bg-red-500 text-white hover:bg-red-600' 
+                    : 'bg-yellow-500 text-black hover:bg-yellow-600'
+                  }
+                  ${isLoading ? 'opacity-50 cursor-not-allowed transform-none' : 'cursor-pointer'}
+                `}
+              >
+                {isLoading ? (
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-current"></div>
+                ) : (
+                  <>
+                    <Clock size={20} />
+                    <span>Stämpla In</span>
+                  </>
+                )}
+              </button>
             </div>
 
-            <button
-              onClick={handleStamp}
-              disabled={isLoading}
-              className={`
-                w-full px-6 py-4 rounded-lg font-semibold text-lg
-                flex items-center justify-center gap-3
-                transition-all duration-200 transform hover:scale-105 active:scale-95
-                shadow-lg hover:shadow-xl
-                ${isStampedIn 
-                  ? 'bg-red-500 text-white hover:bg-red-600' 
-                  : 'bg-green-500 text-white hover:bg-green-600'
-                }
-                ${isLoading ? 'opacity-50 cursor-not-allowed transform-none' : 'cursor-pointer'}
-              `}
-            >
-              {isLoading ? (
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-current"></div>
-              ) : (
-                <>
-                  <Clock size={24} />
-                  <span>{isStampedIn ? 'Stämpla ut' : 'Stämpla in'}</span>
-                </>
-              )}
-            </button>
-
-            {historyItems.length > 0 && (
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Senaste aktivitet</h3>
-                <div className="space-y-2 max-h-40 overflow-y-auto">
+            <div className="border-t pt-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock size={20} className="text-gray-600" />
+                <h4 className="text-lg font-semibold text-gray-900">Stämplingshistorik</h4>
+              </div>
+              <p className="text-gray-600 text-sm">
+                {historyItems.length > 0 ? `${historyItems.length} stämplingar` : 'Inga stämplingar än'}
+              </p>
+              
+              {historyItems.length > 0 && (
+                <div className="mt-4 space-y-2 max-h-40 overflow-y-auto">
                   {historyItems.slice(0, 5).map((item) => (
                     <div key={item.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
                       <span className="text-sm text-gray-600">
-                        {item.type === 'in' ? 'Inloggad' : 'Utloggad'}
+                        {item.type === 'in' ? 'Stämplat in' : 'Stämplat ut'}
                       </span>
                       <span className="text-xs text-gray-500">
                         {formatSwedishDate(item.timestamp)}
@@ -240,8 +247,8 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
