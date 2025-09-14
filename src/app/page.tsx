@@ -173,7 +173,7 @@ export default function Home() {
           <div className="text-center">
             <div className="mb-0">
               <Image
-                src="/logo.png"
+                src="/logo.svg"
                 alt="Städspecialisten Göteborg Logga"
                 width={192}
                 height={192}
@@ -209,7 +209,7 @@ export default function Home() {
                   shadow-lg hover:shadow-xl mb-6
                   ${isStampedIn 
                     ? 'bg-red-500 text-white hover:bg-red-600' 
-                    : 'bg-yellow-500 text-black hover:bg-yellow-600'
+                    : 'bg-yellow-400 text-black hover:bg-yellow-500'
                   }
                   ${isLoading ? 'opacity-50 cursor-not-allowed transform-none' : 'cursor-pointer'}
                 `}
